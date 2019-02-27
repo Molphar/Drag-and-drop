@@ -1,26 +1,24 @@
 .container {
-    margin-top: 20px;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 1210px;
-    padding: 5px;
     border: 2px solid rgb(253, 57, 87);
     border-radius: 5px;
+    max-width: 1210px;
+    margin: 20px auto 0;
+    padding: 5px;
     overflow: hidden;
 }
 
 .container .item, .container > div {
     display: inline-block;
+    margin: 10px;
     width: 100px;
     height: 100px;
-    margin: 10px;
 }
 
 .container .item span{
-    color: rgb(255, 255, 255);
-    text-align: center;
     display: block;
-    line-height: 100px;
     font-family: Sans-Serif;
     font-size: 20pt;
+    text-align: center;
+    line-height: 100px;
+    color: rgb(255, 255, 255);
 }
