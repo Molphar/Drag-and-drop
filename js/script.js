@@ -1,33 +1,33 @@
-var numsInput;
-var containerItems;
-var initButt;
+let numsInput;
+let containerItems;
+let initButt;
 
-window.onload = function(){
+window.onload = function () {
     initButt = document.getElementById("init");
     numsInput = document.getElementById("inpNumbers");
     containerItems = document.querySelector(".container");
 
     initButt.addEventListener("click", ReadElementsNumber);
     let elements = document.querySelectorAll(".item");
-    
+
     elements.forEach((el, index) => {
         addDragListeners(el);
         colorRect(el, index);
     });
 }
 
-function ReadElementsNumber(){
+function ReadElementsNumber() {
     const nums = numsInput.value;
     const rectCount = document.querySelectorAll(".item").length;
     let element = document.createElement("div");
     element.appendChild(document.createElement("span"));
     element.classList.add("item");
     let elements = [];
-    
-    for(let i = 0; i < nums; i++){
+
+    for (let i = 0; i < nums; i++) {
         elements.push(element.cloneNode(true));
     }
-    
+
     elements.forEach((el, index) => {
         addDragListeners(el);
         colorRect(el, index + rectCount);
@@ -36,16 +36,16 @@ function ReadElementsNumber(){
     })
 }
 
-function colorRect(el, index){
-    el.style.background = `rgb(${5*index}, ${5*index}, ${255 - index})`;
+function colorRect(el, index) {
+    el.style.background = `rgb(${5 * index}, ${5 * index}, ${255 - index})`;
 }
 
-function addDragListeners(el){
-    el.addEventListener("touchstart", onTouchDragStart);
-    el.addEventListener("touchmove", onTouchDrag, false);
+function addDragListeners(el) {
+    el.addEventListener("touchstart", onTouchStart);
+    el.addEventListener("touchmove", onTouchMove, false);
     el.addEventListener("touchend", onDragEnd, false);
-    el.addEventListener("mousedown", onMouseDragStart);
-    el.addEventListener("mousemove", onMouseDrag, false);
+    el.addEventListener("mousedown", onMouseStart);
+    el.addEventListener("mousemove", onMouseMove, false);
     el.addEventListener("mouseup", onDragEnd, false);
 }
 
@@ -54,31 +54,32 @@ var currentX;
 var currentY;
 var initialX;
 var initialY;
-var offsetX = 0;
-var offsetY = 0;
+var offsetX;
+var offsetY;
 
-function onMouseDragStart(mouseEvent) {
+function onMouseStart(mouseEvent) {
     let x = mouseEvent.clientX;
     let y = mouseEvent.clientY;
-    dragStart(x, y, mouseEvent.target);
+    const transform = mouseEvent.target.style.transform;
+    dragStart(x, y, transform);
 }
 
-function onTouchDragStart(touchEvent) {
+function onTouchStart(touchEvent) {
     let touch = touchEvent.touches[0];
     let x = touch.clientX;
     let y = touch.clientY;
-    dragStart(x, y);
+    dragStart(x, y, transform);
 }
 
-function dragStart(x, y, el){
+function dragStart(x, y, transform) {
     initialX = x;
     initialY = y;
 
-    let transformProp = el.style.transform;
-    if(transformProp !== ""){
-        let transofm = transformProp.slice(transformProp.indexOf("(") + 1, transformProp.length - 1    );
-        [offsetX, offsetY] = transofm.split("px, ", 2);
-    }else{
+    if (transform !== "") {
+        [offsetX, offsetY] = transform
+            .slice(transform.indexOf("(") + 1, transform.length - 1)
+            .split("px, ", 2);
+    } else {
         offsetX = 0;
         offsetY = 0;
     }
@@ -89,29 +90,31 @@ function dragStart(x, y, el){
     console.log("initialY", initialY);
 }
 
-function onTouchDrag(touchEvent) {
+function onTouchMove(touchEvent) {
     if (isDragging) {
         touchEvent.preventDefault();
-        let touch = touchEvent.touches[0]; 
+        let touch = touchEvent.touches[0];
         let x = touch.clientX;
         let y = touch.clientY;
-        drag(x, y, touchEvent.target);
+        drag(x, y);
+        setTranslate(currentX, currentY, el);
     }
 }
 
-function onMouseDrag(mouseEvent) {
+function onMouseMove(mouseEvent) {
     if (isDragging) {
         mouseEvent.preventDefault();
         let x = mouseEvent.clientX;
         let y = mouseEvent.clientY;
-        drag(x, y, mouseEvent.target);
+        drag(x, y);
+        setTranslate(currentX, currentY, mouseEvent.target);
+
     }
 }
 
-function drag(x, y, el){
+function drag(x, y) {
     currentX = x - initialX + Number(offsetX);
     currentY = y - initialY + Number(offsetY);
-    setTranslate(currentX, currentY, el);
     console.log("drag: ", true);
     console.log("currentX ", currentX);
     console.log("currentY ", currentY);
