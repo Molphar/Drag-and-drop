@@ -60,7 +60,7 @@ var offsetY;
 function onMouseStart(mouseEvent) {
     let x = mouseEvent.clientX;
     let y = mouseEvent.clientY;
-    const transform = mouseEvent.target.style.transform;
+    const transform = mouseEvent.currentTarget.style.transform;
     dragStart(x, y, transform);
 }
 
@@ -68,6 +68,7 @@ function onTouchStart(touchEvent) {
     let touch = touchEvent.touches[0];
     let x = touch.clientX;
     let y = touch.clientY;
+    const transform = mouseEvent.currentTarget.style.transform;
     dragStart(x, y, transform);
 }
 
@@ -85,9 +86,6 @@ function dragStart(x, y, transform) {
     }
     isDragging = true;
 
-    console.log("dragStart: ", true);
-    console.log("initialX", initialX);
-    console.log("initialY", initialY);
 }
 
 function onTouchMove(touchEvent) {
@@ -97,7 +95,7 @@ function onTouchMove(touchEvent) {
         let x = touch.clientX;
         let y = touch.clientY;
         drag(x, y);
-        setTranslate(currentX, currentY, el);
+        setTranslate(currentX, currentY, touchEvent.currentTarget);
     }
 }
 
@@ -107,7 +105,7 @@ function onMouseMove(mouseEvent) {
         let x = mouseEvent.clientX;
         let y = mouseEvent.clientY;
         drag(x, y);
-        setTranslate(currentX, currentY, mouseEvent.target);
+        setTranslate(currentX, currentY, mouseEvent.currentTarget);
 
     }
 }
@@ -115,9 +113,6 @@ function onMouseMove(mouseEvent) {
 function drag(x, y) {
     currentX = x - initialX + Number(offsetX);
     currentY = y - initialY + Number(offsetY);
-    console.log("drag: ", true);
-    console.log("currentX ", currentX);
-    console.log("currentY ", currentY);
 }
 
 function onDragEnd(e) {
