@@ -1,13 +1,22 @@
 let numsInput;
 let containerItems;
-let initButt;
+let createBtn;
+let resetBtn;
+let rangeSlider;
 
 window.onload = function () {
-    initButt = document.getElementById("init");
     numsInput = document.getElementById("inpNumbers");
+    createBtn = document.getElementById("createElems");
+    resetBtn = document.getElementById("resetPos");
     containerItems = document.querySelector(".inner-container");
-
-    initButt.addEventListener("click", ReadElementsNumber);
+    rangeSlider = document.getElementById("inpRangNumbers");
+    rangeSlider.addEventListener("input", onRangeInput);
+    numsInput.addEventListener("input", onNumberInput);
+    setInputFilter(numsInput, function (value) {
+        return /^\d*$/.test(value);
+    });
+    createBtn.addEventListener("click", onReadElementsNumber);
+    resetBtn.addEventListener("click", onResetElementsPosition);
     let elements = document.querySelectorAll(".item");
 
     elements.forEach((el, index) => {
@@ -16,7 +25,36 @@ window.onload = function () {
     });
 }
 
-function ReadElementsNumber() {
+function setInputFilter(input, inputFilter) {
+    ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
+        input.addEventListener(event, function (inputEvent) {
+            if (inputFilter(inputEvent.currentTarget.value)) {
+                inputEvent.currentTarget.oldValue = inputEvent.currentTarget.value;
+                inputEvent.currentTarget.oldSelectionStart = inputEvent.currentTarget.selectionStart;
+                inputEvent.currentTarget.oldSelectionEnd = inputEvent.currentTarget.selectionEnd;
+            } else if (inputEvent.currentTarget.hasOwnProperty("oldValue")) {
+                inputEvent.currentTarget.value = inputEvent.currentTarget.oldValue;
+                inputEvent.currentTarget.setSelectionRange(inputEvent.currentTarget.oldSelectionStart, inputEvent.currentTarget.oldSelectionEnd);
+            }
+        });
+    });
+}
+
+function onNumberInput(inputEvent) {
+    const value = inputEvent.target.value;
+    changeInputValue(rangeSlider, value);
+}
+
+function onRangeInput(inputEvent) {
+    const value = inputEvent.target.value
+    changeInputValue(numsInput, value);
+}
+
+function changeInputValue(inputEl, value) {
+    inputEl.value = value;
+}
+
+function onReadElementsNumber(clickEvent) {
     const nums = numsInput.value;
     const rectCount = document.querySelectorAll(".item").length;
     let element = document.createElement("div");
@@ -33,6 +71,14 @@ function ReadElementsNumber() {
         colorRect(el, index + rectCount);
         el.querySelector("span").innerText = index + rectCount + 1;
         containerItems.appendChild(el);
+    })
+}
+
+function onResetElementsPosition(clickEvent) {
+    elements = document.querySelectorAll(".inner-container .item");
+    elements.forEach((el, index) => {
+        el.style.removeProperty("left");
+        el.style.removeProperty("top");
     })
 }
 
@@ -86,8 +132,7 @@ function onTouchMove(touchEvent) {
         let touch = touchEvent.touches[0];
         let x = touch.clientX;
         let y = touch.clientY;
-        drag(x, y);
-        setPosition(currentX, currentY, touchEvent.currentTarget);
+        drag(x, y, touchEvent.currentTarget);
     }
 }
 
@@ -96,8 +141,7 @@ function onMouseMove(mouseEvent) {
         mouseEvent.preventDefault();
         let x = mouseEvent.clientX;
         let y = mouseEvent.clientY;
-        drag(x, y);
-        setPosition(currentX, currentY, mouseEvent.currentTarget);
+        drag(x, y, mouseEvent.currentTarget);
     }
 }
 
@@ -106,9 +150,10 @@ function setPosition(xPos, yPos, el) {
     el.style.top = yPos + "px";
 }
 
-function drag(x, y) {
+function drag(x, y, el) {
     currentX = x - initialX + offsetX;
     currentY = y - initialY + offsetY;
+    setPosition(currentX, currentY, el);
 }
 
 function onDragEnd(e) {
