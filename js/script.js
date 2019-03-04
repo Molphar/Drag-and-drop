@@ -1,8 +1,11 @@
+import uiSlider from 'nouislider';
+
 let numsInput;
 let containerItems;
 let createBtn;
 let resetBtn;
 let rangeSlider;
+const maxInputNumber = 100;
 
 window.onload = function () {
     numsInput = document.getElementById("inpNumbers");
@@ -10,8 +13,11 @@ window.onload = function () {
     resetBtn = document.getElementById("resetPos");
     containerItems = document.querySelector(".inner-container");
     rangeSlider = document.getElementById("inpRangNumbers");
+
+    numsInput.min = 0;
+    numsInput.max = maxInputNumber;
     rangeSlider.addEventListener("input", onRangeInput);
-    numsInput.addEventListener("input", onNumberInput);
+    numsInput.addEventListener("keyup", onNumberInput);
     setInputFilter(numsInput, function (value) {
         return /^\d*$/.test(value);
     });
@@ -29,6 +35,9 @@ function setInputFilter(input, inputFilter) {
     ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
         input.addEventListener(event, function (inputEvent) {
             if (inputFilter(inputEvent.currentTarget.value)) {
+                if (inputEvent.currentTarget.value > maxInputNumber) {
+                    inputEvent.currentTarget.value = maxInputNumber;
+                }
                 inputEvent.currentTarget.oldValue = inputEvent.currentTarget.value;
                 inputEvent.currentTarget.oldSelectionStart = inputEvent.currentTarget.selectionStart;
                 inputEvent.currentTarget.oldSelectionEnd = inputEvent.currentTarget.selectionEnd;
@@ -161,4 +170,3 @@ function onDragEnd(e) {
     initialY = currentY;
     isDragging = false;
 }
-

@@ -1,0 +1,26 @@
+{
+    "name": "drag-and-drop",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "webpack --config webpack.config.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/HappyFukcer/Drag-and-drop.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/HappyFukcer/Drag-and-drop/issues"
+    },
+    "homepage": "https://github.com/HappyFukcer/Drag-and-drop#readme",
+    "dependencies": {
+        "nouislider": "^13.1.1",
+        "webpack": "^4.29.6"
+    },
+    "devDependencies": {
+        "webpack-cli": "^3.2.3"
+    }
+}
