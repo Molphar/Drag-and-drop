@@ -14,6 +14,25 @@ module.exports = {
                     'style-loader',
                     'css-loader'
                 ]
+            },
+            {
+                test: /\.m?js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [
+                            ['@babel/env',
+                                {
+                                    "targets": {
+                                        "chrome": "58",
+                                        "ie": "11"
+                                    }
+                                }
+                            ]
+                        ]
+                    }
+                }
             }
         ]
     }
