@@ -1,6 +1,7 @@
 import noUiSlider from 'nouislider';
 import 'nouislider/distribute/nouislider.css';
 import '../css/styles.css';
+import 'nodelist-foreach-polyfill';
 
 let numsInput;
 let containerItems;

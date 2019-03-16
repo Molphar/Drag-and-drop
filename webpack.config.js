@@ -16,7 +16,7 @@ module.exports = {
                 ]
             },
             {
-                test: /\.m?js$/,
+                test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
                 use: {
                     loader: 'babel-loader',
@@ -27,7 +27,8 @@ module.exports = {
                                     "targets": {
                                         "chrome": "58",
                                         "ie": "11"
-                                    }
+                                    },
+                                    useBuiltIns: "usage",
                                 }
                             ]
                         ]
