@@ -1,7 +1,7 @@
 import noUiSlider from 'nouislider';
 import 'nouislider/distribute/nouislider.css';
 import '../css/styles.css';
-import 'nodelist-foreach-polyfill';
+import { dragStart, drag, dragEnd } from './drag.js';
 
 let numsInput;
 let containerItems;
@@ -14,7 +14,7 @@ window.onload = function () {
     numsInput = document.getElementById("inpNumbers");
     createBtn = document.getElementById("createElems");
     resetBtn = document.getElementById("resetPos");
-    containerItems = document.querySelector(".inner-container");
+    containerItems = document.querySelector(".draggable-container");
     rangeSlider = document.getElementById("range-slider");
 
     numsInput.min = 0;
@@ -36,12 +36,12 @@ window.onload = function () {
     });
     createBtn.addEventListener("click", onReadElementsNumber);
     resetBtn.addEventListener("click", onResetElementsPosition);
-    let elements = document.querySelectorAll(".item");
-
-    elements.forEach((el, index) => {
+    let elements = document.querySelectorAll(".draggable-item");
+    NodeListArray(elements, function (el, index) {
         addDragListeners(el);
         colorRect(el, index);
-    });
+
+    })
 }
 
 function setInputFilter(input, inputFilter) {
@@ -83,10 +83,10 @@ function changeRangeValue(value) {
 
 function onReadElementsNumber(clickEvent) {
     const nums = numsInput.value;
-    const rectCount = document.querySelectorAll(".item").length;
+    const rectCount = document.querySelectorAll(".draggable-item").length;
     let element = document.createElement("div");
     element.appendChild(document.createElement("span"));
-    element.classList.add("item");
+    element.classList.add("draggable-item");
     let elements = [];
 
     for (let i = 0; i < nums; i++) {
@@ -102,8 +102,8 @@ function onReadElementsNumber(clickEvent) {
 }
 
 function onResetElementsPosition(clickEvent) {
-    elements = document.querySelectorAll(".inner-container .item");
-    elements.forEach((el, index) => {
+    let elements = document.querySelectorAll(".draggable-container .draggable-item");
+    NodeListArray(elements, (el, index) => {
         el.style.removeProperty("left");
         el.style.removeProperty("top");
     })
@@ -123,42 +123,34 @@ function addDragListeners(el) {
 }
 
 let isDragging = false;
-let currentX;
-let currentY;
-let initialX;
-let initialY;
-let offsetX;
-let offsetY;
 
 function onMouseStart(mouseEvent) {
-    let x = mouseEvent.clientX;
-    let y = mouseEvent.clientY;
-    offsetX = parseInt(window.getComputedStyle(mouseEvent.currentTarget)["left"], 10);
-    offsetY = parseInt(window.getComputedStyle(mouseEvent.currentTarget)["top"], 10);
-    dragStart(x, y);
+    const x = mouseEvent.clientX;
+    const y = mouseEvent.clientY;
+    dragStart(x, y,
+        window.getComputedStyle(mouseEvent.currentTarget)["left"],
+        window.getComputedStyle(mouseEvent.currentTarget)["top"]
+    );
+    isDragging = true;
 }
 
 function onTouchStart(touchEvent) {
-    let touch = touchEvent.touches[0];
-    let x = touch.clientX;
-    let y = touch.clientY;
-    offsetX = parseInt(window.getComputedStyle(mouseEvent.currentTarget)["left"], 10);
-    offsetY = parseInt(window.getComputedStyle(mouseEvent.currentTarget)["top"], 10);
-    dragStart(x, y);
-}
-
-function dragStart(x, y) {
-    initialX = x;
-    initialY = y;
+    const touch = touchEvent.touches[0];
+    const x = touch.clientX;
+    const y = touch.clientY;
+    dragStart(x, y,
+        window.getComputedStyle(touchEvent.currentTarget)["left"],
+        window.getComputedStyle(touchEvent.currentTarget)["top"]
+    );
     isDragging = true;
 }
 
 function onTouchMove(touchEvent) {
     if (isDragging) {
         touchEvent.preventDefault();
-        let touch = touchEvent.touches[0];
-        let x = touch.clientX;
-        let y = touch.clientY;
+        const touch = touchEvent.touches[0];
+        const x = touch.clientX;
+        const y = touch.clientY;
         drag(x, y, touchEvent.currentTarget);
     }
 }
@@ -172,19 +164,12 @@ function onMouseMove(mouseEvent) {
     }
 }
 
-function setPosition(xPos, yPos, el) {
-    el.style.left = xPos + "px";
-    el.style.top = yPos + "px";
-}
-
-function drag(x, y, el) {
-    currentX = x - initialX + offsetX;
-    currentY = y - initialY + offsetY;
-    setPosition(currentX, currentY, el);
-}
-
 function onDragEnd(e) {
-    initialX = currentX;
-    initialY = currentY;
+    dragEnd();
     isDragging = false;
+}
+
+function NodeListArray(nodeList, func) {
+    const array = Array.prototype.slice.call(nodeList);
+    array.forEach((el, index) => { func(el, index) });
 }

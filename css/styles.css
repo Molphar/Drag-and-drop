@@ -11,12 +11,12 @@
     overflow: hidden;
 }
 
-.container .inner-container{
+.container .draggable-container{
     position: relative;   
     width: inherit;
 }
 
-.container .item{
+.draggable-container .draggable-item{
     position: relative;   
     display: inline-block;
     margin: 10px;
@@ -24,7 +24,13 @@
     height: 100px;
 }
 
-.container .item span{
+.draggable-container #draggable-frame{
+    position: absolute;   
+    display: inline-block;
+    border:solid 2px red ;
+}
+
+.draggable-container .draggable-item span{
     display: block;
     font-family: Sans-Serif;
     font-size: 20pt;

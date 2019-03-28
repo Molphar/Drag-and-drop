@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    entry: './js/script.js',
+    entry: './source/script.js',
     output: {
         filename: 'script.js',
         path: path.resolve(__dirname, 'dist')
@@ -27,8 +27,7 @@ module.exports = {
                                     "targets": {
                                         "chrome": "58",
                                         "ie": "11"
-                                    },
-                                    useBuiltIns: "usage",
+                                    }
                                 }
                             ]
                         ]
