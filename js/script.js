@@ -5,7 +5,7 @@ let initButt;
 window.onload = function () {
     initButt = document.getElementById("init");
     numsInput = document.getElementById("inpNumbers");
-    containerItems = document.querySelector(".container");
+    containerItems = document.querySelector(".inner-container");
 
     initButt.addEventListener("click", ReadElementsNumber);
     let elements = document.querySelectorAll(".item");
@@ -49,43 +49,35 @@ function addDragListeners(el) {
     el.addEventListener("mouseup", onDragEnd, false);
 }
 
-var isDragging = false;
-var currentX;
-var currentY;
-var initialX;
-var initialY;
-var offsetX;
-var offsetY;
+let isDragging = false;
+let currentX;
+let currentY;
+let initialX;
+let initialY;
+let offsetX;
+let offsetY;
 
 function onMouseStart(mouseEvent) {
     let x = mouseEvent.clientX;
     let y = mouseEvent.clientY;
-    const transform = mouseEvent.currentTarget.style.transform;
-    dragStart(x, y, transform);
+    offsetX = parseInt(window.getComputedStyle(mouseEvent.currentTarget)["left"], 10);
+    offsetY = parseInt(window.getComputedStyle(mouseEvent.currentTarget)["top"], 10);
+    dragStart(x, y);
 }
 
 function onTouchStart(touchEvent) {
     let touch = touchEvent.touches[0];
     let x = touch.clientX;
     let y = touch.clientY;
-    const transform = mouseEvent.currentTarget.style.transform;
-    dragStart(x, y, transform);
+    offsetX = parseInt(window.getComputedStyle(mouseEvent.currentTarget)["left"], 10);
+    offsetY = parseInt(window.getComputedStyle(mouseEvent.currentTarget)["top"], 10);
+    dragStart(x, y);
 }
 
-function dragStart(x, y, transform) {
+function dragStart(x, y) {
     initialX = x;
     initialY = y;
-
-    if (transform !== "") {
-        [offsetX, offsetY] = transform
-            .slice(transform.indexOf("(") + 1, transform.length - 1)
-            .split("px, ", 2);
-    } else {
-        offsetX = 0;
-        offsetY = 0;
-    }
     isDragging = true;
-
 }
 
 function onTouchMove(touchEvent) {
@@ -95,7 +87,7 @@ function onTouchMove(touchEvent) {
         let x = touch.clientX;
         let y = touch.clientY;
         drag(x, y);
-        setTranslate(currentX, currentY, touchEvent.currentTarget);
+        setPosition(currentX, currentY, touchEvent.currentTarget);
     }
 }
 
@@ -105,14 +97,18 @@ function onMouseMove(mouseEvent) {
         let x = mouseEvent.clientX;
         let y = mouseEvent.clientY;
         drag(x, y);
-        setTranslate(currentX, currentY, mouseEvent.currentTarget);
-
+        setPosition(currentX, currentY, mouseEvent.currentTarget);
     }
 }
 
+function setPosition(xPos, yPos, el) {
+    el.style.left = xPos + "px";
+    el.style.top = yPos + "px";
+}
+
 function drag(x, y) {
-    currentX = x - initialX + Number(offsetX);
-    currentY = y - initialY + Number(offsetY);
+    currentX = x - initialX + offsetX;
+    currentY = y - initialY + offsetY;
 }
 
 function onDragEnd(e) {
@@ -121,6 +117,3 @@ function onDragEnd(e) {
     isDragging = false;
 }
 
-function setTranslate(xPos, yPos, el) {
-    el.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-}
