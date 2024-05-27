@@ -1,4 +1,6 @@
-import uiSlider from 'nouislider';
+import noUiSlider from 'nouislider';
+import 'nouislider/distribute/nouislider.css';
+import '../css/styles.css';
 
 let numsInput;
 let containerItems;
@@ -12,11 +14,21 @@ window.onload = function () {
     createBtn = document.getElementById("createElems");
     resetBtn = document.getElementById("resetPos");
     containerItems = document.querySelector(".inner-container");
-    rangeSlider = document.getElementById("inpRangNumbers");
+    rangeSlider = document.getElementById("range-slider");
 
     numsInput.min = 0;
     numsInput.max = maxInputNumber;
-    rangeSlider.addEventListener("input", onRangeInput);
+
+    noUiSlider.create(rangeSlider, {
+        start: 1,
+        range: {
+            'min': 0,
+            'max': 100
+        },
+        step: 1
+    })
+
+    rangeSlider.noUiSlider.on("update", onRangeUpdate);
     numsInput.addEventListener("keyup", onNumberInput);
     setInputFilter(numsInput, function (value) {
         return /^\d*$/.test(value);
@@ -35,7 +47,8 @@ function setInputFilter(input, inputFilter) {
     ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
         input.addEventListener(event, function (inputEvent) {
             if (inputFilter(inputEvent.currentTarget.value)) {
-                if (inputEvent.currentTarget.value > maxInputNumber) {
+
+                if (maxInputNumber !== "" && inputEvent.currentTarget.value > maxInputNumber) {
                     inputEvent.currentTarget.value = maxInputNumber;
                 }
                 inputEvent.currentTarget.oldValue = inputEvent.currentTarget.value;
@@ -51,16 +64,20 @@ function setInputFilter(input, inputFilter) {
 
 function onNumberInput(inputEvent) {
     const value = inputEvent.target.value;
-    changeInputValue(rangeSlider, value);
+    changeRangeValue(value);
 }
 
-function onRangeInput(inputEvent) {
-    const value = inputEvent.target.value
+function onRangeUpdate(values, handle) {
+    const value = Math.trunc(values[handle]);
     changeInputValue(numsInput, value);
 }
 
 function changeInputValue(inputEl, value) {
     inputEl.value = value;
+}
+
+function changeRangeValue(value) {
+    rangeSlider.noUiSlider.set(value);
 }
 
 function onReadElementsNumber(clickEvent) {
