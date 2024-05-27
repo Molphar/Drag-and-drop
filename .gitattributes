@@ -1,0 +1,7 @@
+ 
+*text=auto
+
+*.gitattributes text
+*.js text
+*.css text
+*.htnl text
