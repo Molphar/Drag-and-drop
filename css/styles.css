@@ -1,3 +1,7 @@
+
+.input{
+    width: 150px;
+}
 .container {
     border: 2px solid rgb(253, 57, 87);
     border-radius: 5px;
